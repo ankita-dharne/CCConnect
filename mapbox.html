@@ -35,9 +35,17 @@
 
         map.on('load', function () {
     // Load the icons to the map
-    map.loadImage('assets/Operative.png', function (error, image) {
+    map.loadImage('assets/Repair.png', function (error, image) {
         if (error) throw error;
-        map.addImage('operative-icon', image);
+        map.addImage('repair-icon', image);
+    });
+    map.loadImage('assets/Maintain.png', function (error, image) {
+        if (error) throw error;
+        map.addImage('maintain-icon', image);
+    });
+    map.loadImage('assets/Build.png', function (error, image) {
+        if (error) throw error;
+        map.addImage('build-icon', image);
     });
 
     // Fetch data from both GeoJSON files
@@ -67,10 +75,10 @@
                 'icon-image': [
                     'match',
                     ['get', 'LegalStatus'],
-                    'Operative', 'operative-icon',
+                    'Operative', 'repair-icon',
                     ''   // default
                 ],
-                'icon-size': 0.08
+                'icon-size': 0.1
             }
         });
 
@@ -83,10 +91,10 @@
             'icon-image': [
                 'match',
                 ['get', 'LegalStatus'],
-                'Operative', 'operative-icon',
+                'Operative', 'build-icon',
                 ''   // default
             ],
-            'icon-size': 0.08
+            'icon-size': 0.12
         }
     });
 
