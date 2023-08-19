@@ -34,79 +34,90 @@
         });
 
         map.on('load', function () {
-            // Load the icons to the map
-            map.loadImage('assets/Built.png', function (error, image) {
-                if (error) throw error;
-                map.addImage('build-icon', image);
-            });
+    // Load the icons to the map
+    map.loadImage('assets/Operative.png', function (error, image) {
+        if (error) throw error;
+        map.addImage('operative-icon', image);
+    });
 
-            map.loadImage('assets/Maintain.png', function (error, image) {
-                if (error) throw error;
-                map.addImage('maintain-icon', image);
-            });
-
-            map.loadImage('assets/Repair.png', function (error, image) {
-                if (error) throw error;
-                map.addImage('repair-icon', image);
-            });
-
-            // Fetch data from christchurchplaces.json
-            fetch('christchurchplaces.json')
-                .then(response => response.json())
-                .then(data => {
-                    // Convert data to GeoJSON format
-                    var geojsonData = {
-                        type: 'FeatureCollection',
-                        features: []
-                    };
-
-                    data.forEach(function (item) {
-                        geojsonData.features.push({
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [item.longitude, item.latitude]
-                            },
-                            properties: item
-                        });
-                    });
-
-                    // Add the GeoJSON data source to the map
-                    map.addSource('places', {
-                        type: 'geojson',
-                        data: geojsonData
-                    });
-
-                    map.addLayer({
-                        'id': 'places-points',
-                        'type': 'symbol',
-                        'source': 'places',
-                        'layout': {
-                            'icon-image': ['match', ['get', 'category'],
-                                'Build', 'build-icon',
-                                'Maintain', 'maintain-icon',
-                                'Repair', 'repair-icon',
-                                'default-icon'  // Default icon if category does not match any given value
-                            ],
-                            'icon-size': 0.08  // Size of the icon
-                        }
-                    });
-
-                    // Display a popup on click
-                    map.on('click', 'places-points', function (e) {
-                        var feature = e.features[0];
-                        var popup = new mapboxgl.Popup()
-                            .setLngLat(feature.geometry.coordinates)
-                            .setHTML('<strong>' + feature.properties.place_name + '</strong><br>' +
-                                feature.properties.address + '<br>' +
-                                'Category: ' + feature.properties.category + '<br>' +
-                                'Contact: ' + feature.properties.point_of_contact + '<br>' +
-                                'Urgency: ' + feature.properties.urgency + '<br>' +
-                                'Sentiment: ' + feature.properties.sentiment)
-                            .addTo(map);
-                    });
-                });
+    // Fetch data from both GeoJSON files
+    Promise.all([
+        fetch('DP_Scheduled_Activity_(OpenData).geojson').then(response => response.json()),
+        fetch('DP_Outline_Development_(OpenData).geojson').then(response => response.json())
+    ]).then(([scheduledActivityData, outlineDevelopmentData]) => {
+        
+        // Add the Scheduled Activity GeoJSON data source to the map
+        map.addSource('scheduled-activities', {
+            type: 'geojson',
+            data: scheduledActivityData
         });
+
+        // Add the Outline Development GeoJSON data source to the map
+        map.addSource('outline-developments', {
+            type: 'geojson',
+            data: outlineDevelopmentData
+        });
+
+        // Add Scheduled Activity layer to the map
+        map.addLayer({
+            'id': 'activities-icons',
+            'type': 'symbol',
+            'source': 'scheduled-activities',
+            'layout': {
+                'icon-image': [
+                    'match',
+                    ['get', 'LegalStatus'],
+                    'Operative', 'operative-icon',
+                    ''   // default
+                ],
+                'icon-size': 0.08
+            }
+        });
+
+        // Add Outline Development icons layer to the map
+    map.addLayer({
+        'id': 'outline-development-icons',
+        'type': 'symbol',
+        'source': 'outline-developments',
+        'layout': {
+            'icon-image': [
+                'match',
+                ['get', 'LegalStatus'],
+                'Operative', 'operative-icon',
+                ''   // default
+            ],
+            'icon-size': 0.08
+        }
+    });
+
+    // Display a popup on click for Scheduled Activities
+    map.on('click', 'activities-icons', function (e) {
+        var feature = e.features[0];
+        var popup = new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML('<strong>' + feature.properties.ActivityName + '</strong><br>' +
+                'Type: ' + feature.properties.Type + '<br>' +
+                'Activity Number: ' + feature.properties.ActivityNumber + '<br>' +
+                'Legal Status: ' + feature.properties.LegalStatus)
+            .addTo(map);
+    });
+
+    // Display a popup on click for Outline Developments (assuming similar property structure)
+    map.on('click', 'outline-development-icons', function (e) {
+        var feature = e.features[0];
+        var popup = new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML('<strong>' + feature.properties.ActivityName + '</strong><br>' +
+                'Type: ' + feature.properties.Type + '<br>' +
+                'Activity Number: ' + feature.properties.ActivityNumber + '<br>' +
+                'Legal Status: ' + feature.properties.LegalStatus)
+            .addTo(map);
+    });
+
+
+        // can add more interactivity if needed.
+    });
+});
 
 
     </script>
