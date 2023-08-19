@@ -115,9 +115,9 @@
         var feature = e.features[0];
         var popup = new mapboxgl.Popup()
             .setLngLat(e.lngLat)
-            .setHTML('<strong>' + feature.properties.ActivityName + '</strong><br>' +
+            .setHTML('<strong>' + feature.properties.Name + '</strong><br>' +
                 'Type: ' + feature.properties.Type + '<br>' +
-                'Activity Number: ' + feature.properties.ActivityNumber + '<br>' +
+                'DPOutlineDevelopmentID: ' + feature.properties.DPOutlineDevelopmentID + '<br>' +
                 'Legal Status: ' + feature.properties.LegalStatus)
             .addTo(map);
     });
