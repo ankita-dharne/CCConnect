@@ -2,3 +2,23 @@
     width: 100%;     /* Set the width as needed */
     height: 900px;   /* Set the height as needed */
   }
+
+/* Provide sufficient contrast against white background */
+
+body{
+  display: flex;
+  flex-direction: column;
+}
+a {
+color: #0366d6;
+}
+
+code {
+color: #E01A76;
+}
+
+.btn-primary {
+color: #fff;
+background-color: #1b6ec2;
+border-color: #1861ac;
+}
