@@ -6,7 +6,7 @@ function NavMenu() {
   
   const navigate = useNavigate();
     const navigateToLogin = () => {
-    navigate('/login');
+    navigate('/');
   };
     const navigateToAnalytics = () => {
     navigate('/analytics');
@@ -21,7 +21,7 @@ function NavMenu() {
         <h2> Citizen . Council . Connect</h2>
     </div>
     <div className = "menuItemsBox">
-      <a  href="#home" className = "menuItems">
+      <a  href="#home" className = "menuItems" onClick={navigateToLogin}>
         Home
       </a>
       <a href="#dashboard" className = "menuItems" onClick={navigateToAnalytics}>

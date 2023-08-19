@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./index.css";
-import NavMenu from "./components/NavMenu";
-
+import { Layout } from "./Layout";
 
 function App() {
   mapboxgl.accessToken =
@@ -23,75 +22,85 @@ function App() {
       zoom: zoom,
     });
 
-    map.current.on('load', function () {
-      map.current.loadImage('/Operative.png', function (error, image) {
+    map.current.on("load", function () {
+      map.current.loadImage("/Operative.png", function (error, image) {
         if (error) throw error;
-        map.current.addImage('operative-icon', image);
+        map.current.addImage("operative-icon", image);
 
         // Continue with adding sources and layers after image is loaded
         Promise.all([
-          fetch('DP_Scheduled_Activity_(OpenData).geojson').then(response => response.json()),
-          fetch('DP_Outline_Development_(OpenData).geojson').then(response => response.json())
+          fetch("DP_Scheduled_Activity_(OpenData).geojson").then((response) =>
+            response.json()
+          ),
+          fetch("DP_Outline_Development_(OpenData).geojson").then((response) =>
+            response.json()
+          ),
         ]).then(([scheduledActivityData, outlineDevelopmentData]) => {
-          map.current.addSource('scheduled-activities', {
-            type: 'geojson',
-            data: scheduledActivityData
+          map.current.addSource("scheduled-activities", {
+            type: "geojson",
+            data: scheduledActivityData,
           });
 
-          map.current.addSource('outline-developments', {
-            type: 'geojson',
-            data: outlineDevelopmentData
-          });
-
-          map.current.addLayer({
-            'id': 'activities-icons',
-            'type': 'symbol',
-            'source': 'scheduled-activities',
-            'layout': {
-              'icon-image': [
-                'match',
-                ['get', 'LegalStatus'],
-                'Operative', 'operative-icon',
-                ''   // default
-              ],
-              'icon-size': 0.08
-            }
+          map.current.addSource("outline-developments", {
+            type: "geojson",
+            data: outlineDevelopmentData,
           });
 
           map.current.addLayer({
-            'id': 'outline-development-icons',
-            'type': 'symbol',
-            'source': 'outline-developments',
-            'layout': {
-              'icon-image': [
-                'match',
-                ['get', 'LegalStatus'],
-                'Operative', 'operative-icon',
-                ''   // default
+            id: "activities-icons",
+            type: "symbol",
+            source: "scheduled-activities",
+            layout: {
+              "icon-image": [
+                "match",
+                ["get", "LegalStatus"],
+                "Operative",
+                "operative-icon",
+                "", // default
               ],
-              'icon-size': 0.08
-            }
+              "icon-size": 0.08,
+            },
           });
 
-          map.current.on('click', 'activities-icons', e => {
+          map.current.addLayer({
+            id: "outline-development-icons",
+            type: "symbol",
+            source: "outline-developments",
+            layout: {
+              "icon-image": [
+                "match",
+                ["get", "LegalStatus"],
+                "Operative",
+                "operative-icon",
+                "", // default
+              ],
+              "icon-size": 0.08,
+            },
+          });
+
+          map.current.on("click", "activities-icons", (e) => {
             var feature = e.features[0];
             var popup = new mapboxgl.Popup()
               .setLngLat(e.lngLat)
-              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
-                `Type: ${feature.properties.Type}<br>` +
-                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
-                `Legal Status: ${feature.properties.LegalStatus}`)
+              .setHTML(
+                `<strong>${feature.properties.ActivityName}</strong><br>` +
+                  `Type: ${feature.properties.Type}<br>` +
+                  `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                  `Legal Status: ${feature.properties.LegalStatus}`
+              )
               .addTo(map.current);
           });
 
-          map.current.on('click', 'outline-development-icons', e => {
+          map.current.on("click", "outline-development-icons", (e) => {
             var feature = e.features[0];
             var popup = new mapboxgl.Popup()
               .setLngLat(e.lngLat)
-              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
-                `Type: ${feature.properties.Type}<br>` +
-                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
-                `Legal Status: ${feature.properties.LegalStatus}`)
+              .setHTML(
+                `<strong>${feature.properties.ActivityName}</strong><br>` +
+                  `Type: ${feature.properties.Type}<br>` +
+                  `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                  `Legal Status: ${feature.properties.LegalStatus}`
+              )
               .addTo(map.current);
           });
           return () => {
@@ -103,12 +112,9 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <div>
-      <NavMenu />
-      </div>
-      <div ref={mapContainer} className="map-container"/>
-    </div>
+    <Layout>
+      <div ref={mapContainer} className="map-container" />
+    </Layout>
   );
 }
 
