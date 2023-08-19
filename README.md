@@ -1,6 +1,6 @@
-# Mapbox React Application
+# Citizen Council Connect 
 
-This project is a React application that integrates Mapbox for displaying a map with icons and popups. It demonstrates how to use Mapbox in a React environment to visualize geographical data.
+This project is a React application that try to give analysis on database on citizen survey and also collect survey to create a rich data source.
 
 ## Getting Started
 
@@ -17,13 +17,14 @@ Before you begin, make sure you have the following installed on your machine:
 1. Clone this repository to your local machine using:
 
    ```bash
-   git clone 
+   git clone https://github.com/ankita-dharne/CCConnect.git
 2. Install the project dependencies:
     ```bash
     npm install
 3. Start the development server:
     ```bash
     npm start
+
 ## Customization
 
 ### Replace the icons
@@ -32,6 +33,6 @@ Place your icon images in the public/assets directory and update the paths in th
 
 ### Modify the data source
  
- Replace the contents of christchurchplaces.json with your own geographical data in GeoJSON format.
+ Place your data source or data codebase in the data directory and update the paths in the code accordingly.
 
 ## Licence
