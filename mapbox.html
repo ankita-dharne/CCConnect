@@ -19,31 +19,31 @@
             bottom: 0;
             width: 100%;
         }
+
         .legend {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 5px;
-    position: absolute;
-    bottom: 30px;
-    left: 10px;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 200px;
-}
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 200px;
+        }
 
-.legend h4 {
-    margin: 0 0 10px 0;
-}
+        .legend h4 {
+            margin: 0 0 10px 0;
+        }
 
-.legend img {
-    vertical-align: middle;
-}
+        .legend img {
+            vertical-align: middle;
+        }
 
-.legend span {
-    vertical-align: middle;
-    margin-left: 10px;
-}
-
+        .legend span {
+            vertical-align: middle;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -60,24 +60,31 @@
 
         map.on('load', function () {
             // Load the icons to the map
-            map.loadImage('assets/Repair.png', function (error, image) {
-                if (error) throw error;
-                map.addImage('repair-icon', image);
-            });
-            map.loadImage('assets/Maintain.png', function (error, image) {
-                if (error) throw error;
-                map.addImage('maintain-icon', image);
-            });
             map.loadImage('assets/Build.png', function (error, image) {
                 if (error) throw error;
                 map.addImage('build-icon', image);
             });
+            map.loadImage('assets/Repair.png', function (error, image) {
+                if (error) throw error;
+                map.addImage('repair-icon', image);
+            });
+            map.loadImage('assets/Water.png', function (error, image) {
+                if (error) throw error;
+                map.addImage('water-icon', image);
+            });
+            map.loadImage('assets/Power.png', function (error, image) {
+                if (error) throw error;
+                map.addImage('power-icon', image);
+            });
 
-            // Fetch data from both GeoJSON files
+
+            // Fetch data from GeoJSON files
             Promise.all([
                 fetch('DP_Scheduled_Activity_(OpenData).geojson').then(response => response.json()),
-                fetch('DP_Outline_Development_(OpenData).geojson').then(response => response.json())
-            ]).then(([scheduledActivityData, outlineDevelopmentData]) => {
+                fetch('DP_Outline_Development_(OpenData).geojson').then(response => response.json()),
+                fetch('WaterShutoffs.geojson').then(response => response.json()),
+                fetch('PowerOutages.geojson').then(response => response.json())
+            ]).then(([scheduledActivityData, outlineDevelopmentData, waterShutoffsData, powerOutagesData]) => {
 
                 // Add the Scheduled Activity GeoJSON data source to the map
                 map.addSource('scheduled-activities', {
@@ -90,6 +97,19 @@
                     type: 'geojson',
                     data: outlineDevelopmentData
                 });
+
+                // Add the Water Shutoffs GeoJSON data source to the map
+                map.addSource('water-shutoffs', {
+                    type: 'geojson',
+                    data: waterShutoffsData
+                });
+
+                // Add the Power Outages GeoJSON data source to the map
+                map.addSource('power-outages', {
+                    type: 'geojson',
+                    data: powerOutagesData
+                });
+
 
                 // Add Scheduled Activity layer to the map
                 map.addLayer({
@@ -123,6 +143,38 @@
                     }
                 });
 
+                // Add Water Shutoffs icons layer to the map
+                map.addLayer({
+                    'id': 'water-icons',
+                    'type': 'symbol',
+                    'source': 'water-shutoffs',
+                    'layout': {
+                        'icon-image': [
+                            'match',
+                            ['get', 'feature'],
+                            'watershutoffs', 'water-icon',
+                            ''   // default
+                        ],
+                        'icon-size': 0.1
+                    }
+                });
+
+                // Add Power Outages icons layer to the map
+                map.addLayer({
+                    'id': 'power-icons',
+                    'type': 'symbol',
+                    'source': 'power-outages',
+                    'layout': {
+                        'icon-image': [
+                            'match',
+                            ['get', 'feature'],
+                            'poweroutage', 'power-icon',
+                            ''   // default
+                        ],
+                        'icon-size': 0.1
+                    }
+                });
+
                 // Display a popup on click for Scheduled Activities
                 map.on('click', 'activities-icons', function (e) {
                     var feature = e.features[0];
@@ -135,7 +187,7 @@
                         .addTo(map);
                 });
 
-                // Display a popup on click for Outline Developments (assuming similar property structure)
+                // Display a popup on click for Outline Developments 
                 map.on('click', 'outline-development-icons', function (e) {
                     var feature = e.features[0];
                     var popup = new mapboxgl.Popup()
@@ -147,31 +199,58 @@
                         .addTo(map);
                 });
 
+                // Display a popup on click for Water Shutoffs 
+                map.on('click', 'water-icons', function (e) {
+                    var feature = e.features[0];
+                    var popup = new mapboxgl.Popup()
+                        .setLngLat(e.lngLat)
+                        .setHTML('<strong>' + feature.properties.Address + '</strong><br>' +
+                            'Is active: ' + feature.properties.IsActive + '<br>' +
+                            'Shut down type: ' + feature.properties.ShutdownType + '<br>' +
+                            'Est hours off: ' + feature.properties.LegalStatus)
+                        .addTo(map);
+                });
 
-                
+                // Display a popup on click for Power Outages 
+                map.on('click', 'power-icons', function (e) {
+                    var feature = e.features[0];
+                    var popup = new mapboxgl.Popup()
+                        .setLngLat(e.lngLat)
+                        .setHTML('<strong>' + feature.properties.feature + '</strong><br>' +
+                            'Comment: ' + feature.properties.comment + '<br>' +
+                            'Cause: ' + feature.properties.cause + '<br>' +
+                            'Area: ' + feature.properties.area)
+                        .addTo(map);
+                });
+
+
+
 
             });
-            
+
         });
-        
+
     </script>
 
-// add legend
-<div class="legend">
-    <h4>LEGEND</h4>
-    <div>
-        <img src="assets/Build.png" alt="Repair" width="20px">
+    // add legend
+    <div class="legend">
+        <h4>LEGEND</h4>
+        <div>
+            <img src="assets/Build.png" alt="Repair" width="20px">
             <span>Under Building</span>
-    </div>
-    <div>
-        <img src="assets/Repair.png" alt="Repair" width="20px">
+        </div>
+        <div>
+            <img src="assets/Repair.png" alt="Repair" width="20px">
             <span>Under Repairing</span>
-    </div>
-    <div>
-        <img src="assets/Maintain.png" alt="Maintain" width="20px">
-            <span>Under Maintaining</span>
-    </div>
-</div>
+        </div>
+        <div>
+            <img src="assets/Water.png" alt="Water" width="20px">
+            <span>Water Shutoffs</span>
+        </div>
+        <div>
+            <img src="assets/Power.png" alt="Power" width="20px">
+            <span>Power Outages</span>
+        </div>
 </body>
 
 </html>
