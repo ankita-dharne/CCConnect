@@ -1,94 +1,126 @@
-import React, { useEffect } from 'react';
-import mapboxgl from 'mapbox-gl'; // Make sure to install 'mapbox-gl' package
-
-import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox CSS
-
-mapboxgl.accessToken = 'pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ';
+import React, { useEffect, useRef, useState } from "react";
+import mapboxgl from "!mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import "./index.css";
 
 function App() {
+  mapboxgl.accessToken =
+    "pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ";
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng, setLng] = useState(172.6362);
+  const [lat, setLat] = useState(-43.5321);
+  const [zoom, setZoom] = useState(8);
+
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [172.6362, -43.5321],
-      zoom: 8
+    if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/satellite-streets-v12",
+      center: [lng, lat],
+      zoom: zoom,
     });
+// }, []);
 
-    map.on('load', function () {
-      // Load the icons to the map
-      map.loadImage('assets/Built.png', function (error, image) {
+
+  // useEffect(() => {
+  //   mapboxgl.accessToken = 'pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ';
+
+  //   const map = new mapboxgl.Map({
+  //     container: 'map', // Ensure 'map' container is in your index.html
+  //     style: 'mapbox://styles/mapbox/streets-v11',
+  //     center: [172.6362, -43.5321],
+  //     zoom: 8
+  //   });
+
+    map.current.on('load', function () {
+      map.current.loadImage('/Operative.png', function (error, image) {
         if (error) throw error;
-        map.addImage('build-icon', image);
-      });
+        map.current.addImage('operative-icon', image);
 
-      map.loadImage('assets/Maintain.png', function (error, image) {
-        if (error) throw error;
-        map.addImage('maintain-icon', image);
-      });
-
-      map.loadImage('assets/Repair.png', function (error, image) {
-        if (error) throw error;
-        map.addImage('repair-icon', image);
-      });
-
-      // Fetch data from christchurchplaces.json
-      fetch('christchurchplaces.json')
-        .then(response => response.json())
-        .then(data => {
-          // Convert data to GeoJSON format
-          const geojsonData = {
-            type: 'FeatureCollection',
-            features: data.map(item => ({
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [item.longitude, item.latitude]
-              },
-              properties: item
-            }))
-          };
-
-          // Add the GeoJSON data source to the map
-          map.addSource('places', {
+        // Continue with adding sources and layers after image is loaded
+        Promise.all([
+          fetch('DP_Scheduled_Activity_(OpenData).geojson').then(response => response.json()),
+          fetch('DP_Outline_Development_(OpenData).geojson').then(response => response.json())
+        ]).then(([scheduledActivityData, outlineDevelopmentData]) => {
+          map.current.addSource('scheduled-activities', {
             type: 'geojson',
-            data: geojsonData
+            data: scheduledActivityData
           });
 
-          map.addLayer({
-            'id': 'places-points',
+          map.current.addSource('outline-developments', {
+            type: 'geojson',
+            data: outlineDevelopmentData
+          });
+
+          map.current.addLayer({
+            'id': 'activities-icons',
             'type': 'symbol',
-            'source': 'places',
+            'source': 'scheduled-activities',
             'layout': {
-              'icon-image': ['match', ['get', 'category'],
-                'Build', 'build-icon',
-                'Maintain', 'maintain-icon',
-                'Repair', 'repair-icon',
-                'default-icon'  // Default icon if category does not match any given value
+              'icon-image': [
+                'match',
+                ['get', 'LegalStatus'],
+                'Operative', 'operative-icon',
+                ''   // default
               ],
-              'icon-size': 0.08  // Size of the icon
+              'icon-size': 0.08
             }
           });
 
-          // Display a popup on click
-          map.on('click', 'places-points', function (e) {
-            const feature = e.features[0];
-            const popup = new mapboxgl.Popup()
-              .setLngLat(feature.geometry.coordinates)
-              .setHTML('<strong>' + feature.properties.place_name + '</strong><br>' +
-                feature.properties.address + '<br>' +
-                'Category: ' + feature.properties.category + '<br>' +
-                'Contact: ' + feature.properties.point_of_contact + '<br>' +
-                'Urgency: ' + feature.properties.urgency + '<br>' +
-                'Sentiment: ' + feature.properties.sentiment)
-              .addTo(map);
+          map.current.addLayer({
+            'id': 'outline-development-icons',
+            'type': 'symbol',
+            'source': 'outline-developments',
+            'layout': {
+              'icon-image': [
+                'match',
+                ['get', 'LegalStatus'],
+                'Operative', 'operative-icon',
+                ''   // default
+              ],
+              'icon-size': 0.08
+            }
           });
+
+          map.current.on('click', 'activities-icons', e => {
+            var feature = e.features[0];
+            var popup = new mapboxgl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
+                `Type: ${feature.properties.Type}<br>` +
+                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                `Legal Status: ${feature.properties.LegalStatus}`)
+              .addTo(map.current);
+          });
+
+          map.current.on('click', 'outline-development-icons', e => {
+            var feature = e.features[0];
+            var popup = new mapboxgl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
+                `Type: ${feature.properties.Type}<br>` +
+                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                `Legal Status: ${feature.properties.LegalStatus}`)
+              .addTo(map.current);
+          });
+          return () => {
+            map.remove();
+          };
         });
+      });
     });
   }, []);
 
+  // return (
+  //   <div className="App">
+  //     {/* Empty container div for the map */}
+  //     <div id="map" className="map-container"></div>
+  //   </div>
+  // );
   return (
-    <div className="App">
-      <div id='map'></div>
+    <div>
+      <div ref={mapContainer} className="map-container"/>
     </div>
   );
 }
