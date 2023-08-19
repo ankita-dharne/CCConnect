@@ -1,9 +1,11 @@
+from flask import Flask, jsonify, send_file
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import PillowWriter
-
+import io
+from flask_cors import CORS
 
 # Simulated data
 np.random.seed(0)
@@ -88,3 +90,28 @@ writer = PillowWriter(fps=10)  # 10 frames per second
 ani.save("sentiment_analysis.gif", writer=writer)
 
 plt.show()
+
+app = Flask(__name__)
+CORS(app)
+
+
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    # Return your data as JSON
+    data = df_interp.to_dict(orient='records')
+    return jsonify(data)
+
+@app.route('/api/animation', methods=['GET'])
+def get_animation():
+    # Generate the animation and save it to a BytesIO object
+    ani = FuncAnimation(fig, update, frames=len(unique_dates), repeat=False, interval=100)
+    writer = PillowWriter(fps=10)
+    buf = io.BytesIO()
+    ani.save(buf, writer=writer)
+    buf.seek(0)
+    
+    # Send the animation as a response
+    return send_file(buf, mimetype='image/gif')
+
+if __name__ == '__main__':
+    app.run(debug=True)
