@@ -1,8 +1,10 @@
 import React from 'react';
 import './Analytics.css'
+import { Layout } from '../Layout';
 
 const AnalyticsDashboard = () => {
   return (
+    <Layout>
     <div className="dashboard-container">
       <h1>Sentimental Analysis Dashboard</h1>
       <div className="image-item">
@@ -12,6 +14,7 @@ const AnalyticsDashboard = () => {
           <img src={'/model_accuracy.png'} alt="Accuracy" className="image-accuracy" />
         </div>
     </div>
+    </Layout>
   );
 };
 
