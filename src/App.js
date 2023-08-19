@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./index.css";
+import NavMenu from "./components/NavMenu";
+
 
 function App() {
   mapboxgl.accessToken =
@@ -20,18 +22,6 @@ function App() {
       center: [lng, lat],
       zoom: zoom,
     });
-// }, []);
-
-
-  // useEffect(() => {
-  //   mapboxgl.accessToken = 'pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ';
-
-  //   const map = new mapboxgl.Map({
-  //     container: 'map', // Ensure 'map' container is in your index.html
-  //     style: 'mapbox://styles/mapbox/streets-v11',
-  //     center: [172.6362, -43.5321],
-  //     zoom: 8
-  //   });
 
     map.current.on('load', function () {
       map.current.loadImage('/Operative.png', function (error, image) {
@@ -112,14 +102,11 @@ function App() {
     });
   }, []);
 
-  // return (
-  //   <div className="App">
-  //     {/* Empty container div for the map */}
-  //     <div id="map" className="map-container"></div>
-  //   </div>
-  // );
   return (
     <div>
+      <div>
+      <NavMenu />
+      </div>
       <div ref={mapContainer} className="map-container"/>
     </div>
   );
