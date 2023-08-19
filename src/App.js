@@ -83,27 +83,30 @@ function App() {
             }
           });
 
-          map.current.on('click', 'activities-icons', function (e) {
+          map.current.on('click', 'activities-icons', e => {
             var feature = e.features[0];
             var popup = new mapboxgl.Popup()
               .setLngLat(e.lngLat)
-              .setHTML('<strong>' + feature.properties.ActivityName + '</strong><br>' +
-                'Type: ' + feature.properties.Type + '<br>' +
-                'Activity Number: ' + feature.properties.ActivityNumber + '<br>' +
-                'Legal Status: ' + feature.properties.LegalStatus)
-              .addTo(map);
+              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
+                `Type: ${feature.properties.Type}<br>` +
+                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                `Legal Status: ${feature.properties.LegalStatus}`)
+              .addTo(map.current);
           });
 
-          map.current.on('click', 'outline-development-icons', function (e) {
+          map.current.on('click', 'outline-development-icons', e => {
             var feature = e.features[0];
             var popup = new mapboxgl.Popup()
               .setLngLat(e.lngLat)
-              .setHTML('<strong>' + feature.properties.ActivityName + '</strong><br>' +
-                'Type: ' + feature.properties.Type + '<br>' +
-                'Activity Number: ' + feature.properties.ActivityNumber + '<br>' +
-                'Legal Status: ' + feature.properties.LegalStatus)
-              .addTo(map);
+              .setHTML(`<strong>${feature.properties.ActivityName}</strong><br>` +
+                `Type: ${feature.properties.Type}<br>` +
+                `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                `Legal Status: ${feature.properties.LegalStatus}`)
+              .addTo(map.current);
           });
+          return () => {
+            map.remove();
+          };
         });
       });
     });
