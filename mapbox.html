@@ -14,13 +14,69 @@
 <body>
 <div id='map'></div>
 <script>
-mapboxgl.accessToken = 'pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ'; 
+mapboxgl.accessToken = 'pk.eyJ1IjoibHBlaTc1NiIsImEiOiJjbGxoOHozODAwOHpxM2xsd2ZsM2xzOWl3In0.Gh9K818BkemD9i3PrQblrQ';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11', 
-    center: [172.6362, -43.5321], 
-    zoom: 8 
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [172.6362, -43.5321],
+    zoom: 8
 });
+
+map.on('load', function() {
+    // Fetch data from christchurchplaces.json
+    fetch('christchurchplaces.json')
+        .then(response => response.json())
+        .then(data => {
+            // Convert data to GeoJSON format
+            var geojsonData = {
+                type: 'FeatureCollection',
+                features: []
+            };
+
+            data.forEach(function(item) {
+                geojsonData.features.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [item.longitude, item.latitude]
+                    },
+                    properties: item
+                });
+            });
+
+            // Add the GeoJSON data source to the map
+            map.addSource('places', {
+                type: 'geojson',
+                data: geojsonData
+            });
+
+            // Add point layer to display the data source
+            map.addLayer({
+                id: 'places-points',
+                type: 'circle',
+                source: 'places',
+                paint: {
+                    'circle-radius': 6,
+                    'circle-color': '#007cbf'
+                }
+            });
+
+            // Display a popup on click
+            map.on('click', 'places-points', function(e) {
+                var feature = e.features[0];
+                var popup = new mapboxgl.Popup()
+                    .setLngLat(feature.geometry.coordinates)
+                    .setHTML('<strong>' + feature.properties.place_name + '</strong><br>' +
+                            feature.properties.address + '<br>' +
+                            'Category: ' + feature.properties.category + '<br>' +
+                            'Contact: ' + feature.properties.point_of_contact + '<br>' +
+                            'Urgency: ' + feature.properties.urgency + '<br>' +
+                            'Sentiment: ' + feature.properties.sentiment)
+                    .addTo(map);
+            });
+        });
+});
+
 
 </script>
 </body>
