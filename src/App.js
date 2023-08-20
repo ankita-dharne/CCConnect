@@ -157,26 +157,25 @@ function App() {
               var popup = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
                 .setHTML(
-                  `<strong>${feature.properties.ActivityName}</strong><br>` +
+                  `<strong>${feature.properties.Name}</strong><br>` +
                     `Type: ${feature.properties.Type}<br>` +
-                    `Activity Number: ${feature.properties.ActivityNumber}<br>` +
+                    `Activity Number: ${feature.properties.DPOutlineDevelopmentID}<br>` +
                     `Legal Status: ${feature.properties.LegalStatus}`
                 )
                 .addTo(map.current);
             });
 
-            // Display a popup on click for Water Shutoffs
             map.current.on("click", "water-icons", (e) => {
-              const feature = e.features[0];
-              const popup = new mapboxgl.Popup()
+              var feature = e.features[0];
+              var popup = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
                 .setHTML(
                   `<strong>${feature.properties.Address}</strong><br>` +
                     `Is active: ${feature.properties.IsActive}<br>` +
                     `Shut down type: ${feature.properties.ShutdownType}<br>` +
-                    `Est hours off: ${feature.properties.LegalStatus}`
+                    `Est hours off${feature.properties.LegalStatus}`
                 )
-                .addTo(map);
+                .addTo(map.current);
             });
 
             // Display a popup on click for Power Outages
@@ -190,11 +189,11 @@ function App() {
                     `Cause: ${feature.properties.cause}<br>` +
                     `Area: ${feature.properties.area}`
                 )
-                .addTo(map);
+                .addTo(map.current);
             });
 
             return () => {
-              map.remove();
+              map.current.remove();
             };
           }
         );
