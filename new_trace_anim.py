@@ -3,8 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-
-
 # Simulated data
 np.random.seed(0)
 dates = pd.date_range(start='2024-01-01', periods=10, freq='D')
@@ -21,6 +19,12 @@ df = pd.DataFrame({
     'Neutral': np.random.randint(0, 100, len(dates) * len(platforms)) / 100,
     'Negative': np.tile(negative_trend, len(platforms)) + np.random.randint(-10, 10, len(dates) * len(platforms)) / 100
 })
+
+# Calculate the proportions
+df['Total'] = df['Positive'] + df['Neutral'] + df['Negative']
+df['Positive'] /= df['Total']
+df['Neutral'] /= df['Total']
+df['Negative'] /= df['Total']
 
 
 

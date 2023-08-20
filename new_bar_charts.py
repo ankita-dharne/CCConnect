@@ -14,6 +14,12 @@ for sentiment in ['positive', 'neutral', 'negative']:
     if sentiment not in pivot_df.columns:
         pivot_df[sentiment] = 0
 
+# Calculate the proportions
+pivot_df['total'] = pivot_df['positive'] + pivot_df['neutral'] + pivot_df['negative']
+pivot_df['positive'] = pivot_df['positive'] / pivot_df['total']
+pivot_df['neutral'] = pivot_df['neutral'] / pivot_df['total']
+pivot_df['negative'] = pivot_df['negative'] / pivot_df['total']
+
 # Bar width and locations for bar plot
 width = 0.3
 locations = np.array(range(len(pivot_df)))
@@ -33,7 +39,7 @@ ax.bar(locations + width, pivot_df['negative'], width=width, label='Negative', c
 ax.set_xticks(locations)
 ax.set_xticklabels(pivot_df['platform'])
 ax.set_title("Sentiment Distribution by Platform")
-ax.set_ylabel("Count")
+ax.set_ylabel("Proportion of Sentiments")
 ax.set_xlabel("Platform")
 ax.legend()
 

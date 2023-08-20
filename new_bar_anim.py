@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import PillowWriter
 
-
 # Simulated data
 np.random.seed(0)
 dates = pd.date_range(start='2024-01-01', periods=10, freq='D')
@@ -14,17 +13,19 @@ platforms = ['Facebook', 'Twitter', 'Reddit']
 negative_trend = np.linspace(0.9, 0.1, len(dates))
 positive_trend = np.linspace(0.1, 0.9, len(dates))
 
-
 df = pd.DataFrame({
     'Date': np.tile(dates, len(platforms)),
     'Platform': np.repeat(platforms, len(dates)),
     'Positive': np.tile(positive_trend, len(platforms)) + np.random.randint(-10, 10, len(dates) * len(platforms))/100,
     'Neutral': np.random.randint(0, 100, len(dates) * len(platforms))/100,
     'Negative': np.tile(negative_trend, len(platforms)) + np.random.randint(-10, 10, len(dates) * len(platforms))/100
-
 })
 
-
+# Calculate the proportions
+df['Total'] = df['Positive'] + df['Neutral'] + df['Negative']
+df['Positive'] /= df['Total']
+df['Neutral'] /= df['Total']
+df['Negative'] /= df['Total']
 
 
 
@@ -43,6 +44,11 @@ for platform in platforms:
     upsampled = platform_df.resample(resample_str).asfreq().interpolate()
     upsampled['Platform'] = platform
     dfs.append(upsampled.reset_index())
+
+
+
+
+
 
 df_interp = pd.concat(dfs, axis=0)
 
@@ -86,7 +92,7 @@ def update(num):
 # Create the animation with adjusted interval
 ani = FuncAnimation(fig, update, frames=len(unique_dates), repeat=False, interval=100)  # 100ms per frame
 
-#plt.show()
+# plt.show()
 
 
 # Save the animation as a GIF
