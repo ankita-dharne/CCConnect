@@ -24,6 +24,9 @@ Before you begin, make sure you have the following installed on your machine:
 3. Start the development server:
     ```bash
     npm start
+3. Start the production server:
+    ```bash
+    npm build
 
 ## Customization
 
