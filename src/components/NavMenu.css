@@ -1,14 +1,16 @@
 .navSection {
   display: flex;
-  width: 100%;
+  width: auto;
   /* align-items: center; */
   justify-content: space-between;
-  background: 	#f9b745;
+  background: 	#3A75AF;
   z-index: 1;
   margin-top: 15px;
   height: 67px;
   /* position: fixed; */
   padding: 15px;
+  margin-top: -8px;
+  padding-right: 15px;
 }
 
 .logo-img{
@@ -19,7 +21,7 @@
   margin-top: 0px;
   margin-bottom: 0px;
   font-family: 'Open Sans', sans-serif;
-  color: #69b9ff;
+  color: #ffffff;
   font-size: 20px;
   line-height: 25px;
   font-weight: 300;
@@ -29,6 +31,7 @@
 
 .logoSection{
   align-self: center;
+  color: #ffffff;
 }
 
 .menuItemsBox {
@@ -41,7 +44,7 @@
   display: inline-block;
   vertical-align: top;
   text-decoration: none;
-  color: #000000;
+  color: #ffffff;
   padding: 20px;
   text-align: left;
   font-family: system-ui;
@@ -52,5 +55,5 @@
 }
 
 .menuItems:hover {
-  color: #F88379;
+  color: #000000;
 }

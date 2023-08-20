@@ -22,3 +22,30 @@ color: #fff;
 background-color: #1b6ec2;
 border-color: #1861ac;
 }
+
+
+.legend {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  margin: 15px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 30px;
+  left: 10px;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 200px;
+}
+
+.legend h4 {
+  margin: 0 0 10px 0;
+}
+
+.legend img {
+  vertical-align: middle;
+}
+
+.legend span {
+  vertical-align: middle;
+  margin-left: 10px;
+}

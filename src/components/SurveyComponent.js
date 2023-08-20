@@ -65,6 +65,8 @@ function SurveyComponent() {
             <br></br>
             <label>Location:</label>
             <input type="text" {...register("location", { required: true })} />
+            <label>Description:</label>
+            <input type="text" className="description"{...register("description", { required: true })} />
             {errors.location && (
               <span className="error-message">Location is required</span>
             )}
