@@ -9,7 +9,7 @@ const AnalyticsDashboard = () => {
 		margin: "10px 0 40px 0", // Add some margin between images
 		width: "60%", // Set the width of the images
 		height: "auto", // Automatically adjust the height while maintaining aspect ratio
-    marginLeft: "400px",
+    	marginLeft: "250px",
     
 	};
   return (
