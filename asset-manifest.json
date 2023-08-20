@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/CCConnect/static/css/main.b22f6d63.css",
+    "main.js": "/CCConnect/static/js/main.c7a4d393.js",
+    "index.html": "/CCConnect/index.html",
+    "main.b22f6d63.css.map": "/CCConnect/static/css/main.b22f6d63.css.map",
+    "main.c7a4d393.js.map": "/CCConnect/static/js/main.c7a4d393.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b22f6d63.css",
+    "static/js/main.c7a4d393.js"
+  ]
+}
