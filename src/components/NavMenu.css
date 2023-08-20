@@ -1,6 +1,6 @@
 .navSection {
   display: flex;
-  width: 100%;
+  width: auto;
   /* align-items: center; */
   justify-content: space-between;
   background: 	#f9b745;
@@ -9,6 +9,8 @@
   height: 67px;
   /* position: fixed; */
   padding: 15px;
+  margin-top: -8px;
+  padding-right: 15px;
 }
 
 .logo-img{
