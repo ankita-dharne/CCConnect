@@ -11,18 +11,7 @@
     margin-bottom: 20px;
   }
   
-  .image-left-item {
-    flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  }
-  .image-item {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center
-  }
+ 
 
   .image-accuracy {
     width: 350px; /* Adjust the width as needed */
