@@ -1,7 +1,7 @@
 .dashboard-container {
-    background-color: #FFFFFF;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  height: 100%;
+    background-color: #ffffff;
     align-items: center;
     padding: 20px;
   }
@@ -11,11 +11,17 @@
     margin-bottom: 20px;
   }
   
-  .image-chart {
-    width: 800px; /* Adjust the width as needed */
-  height: 500px; /* Adjust the height as needed */
-  border: 1px solid #ccc;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  .image-left-item {
+    flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  }
+  .image-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center
   }
 
   .image-accuracy {
@@ -25,9 +31,12 @@
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 30px;
   }
-  
-  .image-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+
+
+  /* Add this to your CSS file */
+.image-container {
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  gap: 50px;
+}
